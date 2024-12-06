@@ -11,7 +11,7 @@ let input_file_to_sorted_list file_path =
       (* split string on space, and exclude empty items extracted *)
       match String.split_on_char ' ' line |> List.filter (fun s -> s <> "") with
       (* check for exact 2 ints match *)
-      | [x; y] ->
+      | [ x; y ] ->
           let int_x = int_of_string x in
           let int_y = int_of_string y in
           process_lines (int_x :: l1) (int_y :: l2)
@@ -20,13 +20,14 @@ let input_file_to_sorted_list file_path =
       close_in input_channel;
       (* on reach end of file, return 2 sorted lists *)
       (List.sort compare l1, List.sort compare l2)
-  in process_lines [] []
+  in
+  process_lines [] []
 
 (** find total distance given 2 sorted lists *)
 let rec find_total_distance l1 l2 =
-  match l1, l2 with
+  match (l1, l2) with
   | [], [] -> 0
-  | a :: rest1, b :: rest2 -> (abs (a - b)) + find_total_distance rest1 rest2
+  | a :: rest1, b :: rest2 -> abs (a - b) + find_total_distance rest1 rest2
   | _ -> raise (Failure "error finding distance")
 
 (** find frequency of elements in list, given a sorted list *)
@@ -49,9 +50,12 @@ let () =
 
   (* find answer to part 1 *)
   let total_distance = find_total_distance l1 l2 in
-  print_string "solution to part 1: "; print_int total_distance; print_endline "";
+  print_string "solution to part 1: ";
+  print_int total_distance;
+  print_endline "";
 
   (* find answer to part 2 *)
   let similarity_score = find_similarity_score l1 l2 in
-  print_string "solution to part 2: "; print_int similarity_score; print_endline "";
-
+  print_string "solution to part 2: ";
+  print_int similarity_score;
+  print_endline ""

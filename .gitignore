@@ -31,3 +31,5 @@ _opam/
 # Project specific
 /data
 /test
+thoughts.md
+.ocamlformat
