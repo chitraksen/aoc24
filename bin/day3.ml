@@ -24,36 +24,59 @@ let process_inputs str =
       Some (int_of_string a, int_of_string b)
   | _ -> None
 
-(** process input string to find instructions, process said instructions, and return final result *)
-let process_instructions str =
-  let rec process_string str pos res =
+(** given an m is found, takes position of m and returns an int.
+   it's 0 if valid mul instructions not found. otherwise it's the product. *)
+let process_mul str start_pos =
+  (* check if valid mul instruction exists at m *)
+  if start_pos + 4 < String.length str && String.sub str start_pos 4 = "mul("
+  then
     try
-      let start_pos = String.index_from str pos 'm' in
-      (* if 'm' found, check existence of "mul(" *)
-      if
-        start_pos + 4 < String.length str && String.sub str start_pos 4 = "mul("
-      then
-        try
-          let end_pos = String.index_from str (start_pos + 4) ')' in
-          (* if instructions found, try processing them and adding to total *)
-          match
-            process_inputs
-              (String.sub str (start_pos + 4) (end_pos - start_pos - 4))
-          with
-          | Some (a, b) ->
-              let prod = a * b in
-              process_string str (end_pos + 1) (res + prod)
-          (* if parameters not valid, start searching after "mul(" *)
-          | None -> process_string str (start_pos + 4) res
-          (* if closed bracket not found, no more valid instructions exist -> return current result. *)
-        with Not_found -> res
-        (* if 'm' found but "mul(" not found, just start searching from next pos *)
-      else process_string str (start_pos + 1) res
-      (* if 'm' not found, no more valid instructions exist -> return current result *)
-    with Not_found -> res
+      let end_pos = String.index_from str (start_pos + 4) ')' in
+      (* if instructions found, try processing them and adding to total *)
+      match
+        process_inputs
+          (String.sub str (start_pos + 4) (end_pos - start_pos - 4))
+      with
+      | Some (a, b) -> (a * b, end_pos)
+      (* if parameters not valid, start searching after "mul(" *)
+      | None -> (0, start_pos + 1)
+      (* if closed bracket not found, no more valid instructions exist.
+         return current result, with final index as no more checking needs to be done. *)
+    with Not_found -> (0, String.length str)
+    (* if 'm' found but "mul(" not found, just start searching from next pos *)
+  else (0, start_pos + 1)
+
+(** check if content starting with d is do() or don't(). if yes return new state. if not, return same state. *)
+let process_d str start_pos state =
+  if start_pos + 7 < String.length str && String.sub str start_pos 7 = "don't()"
+  then (false, start_pos + 7)
+  else if
+    start_pos + 4 < String.length str && String.sub str start_pos 4 = "do()"
+  then (true, start_pos + 4)
+  else (state, start_pos + 1)
+
+(** process input string to find instruction starts, process said instructions, and return final result *)
+let process_instructions str conditionals =
+  let rec process_string str pos res state =
+    (* check if d or m found - start of valid instructions *)
+    let next_m_found = String.index_from_opt str pos 'm' in
+    let next_d_found = String.index_from_opt str pos 'd' in
+    (* if starting found, match them based on what/where things are found *)
+    match (next_m_found, next_d_found) with
+    | Some m_pos, Some d_pos when d_pos < m_pos ->
+        let new_state, next_pos = process_d str d_pos state in
+        if conditionals then process_string str next_pos res new_state
+        else process_string str next_pos res state
+    | Some m_pos, _ ->
+        let prod, next_pos = process_mul str m_pos in
+        if state then process_string str next_pos (res + prod) state
+        else process_string str next_pos res state
+    (* if no valid instructions found, return current result *)
+    | _ -> res
   in
-  process_string str 0 0
+  process_string str 0 0 true
 
 let () =
-  let res = file_path |> input_file_to_string |> process_instructions in
-  Printf.printf "solution to part 1: %d\n" res
+  let content = input_file_to_string file_path in
+  Printf.printf "solution to part 1: %d\n" (process_instructions content false);
+  Printf.printf "solution to part 1: %d\n" (process_instructions content true)
