@@ -65,6 +65,7 @@ let process_matrix matrix =
           if cell = 'X' then
             (Array.iter (fun dir ->
                  try
+                   (* this function fails if not found, unit type if found *)
                    word_exists_in_dir matrix [| i; j |] dir;
                    words := !words + 1
                  with Failure _ -> ()))
