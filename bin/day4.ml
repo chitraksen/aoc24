@@ -32,7 +32,8 @@ let input_file_to_matrix file_path =
   let matrix_1d = String.split_on_char '\n' content |> Array.of_list in
   Array.map (fun row -> String.to_seq row |> Array.of_seq) matrix_1d
 
-(** check if search word exists from specific position, in traversal direction *)
+(** check if search word exists from specific position, in traversal direction.
+    fails if search word doesn't exist. unit otherwise. *)
 let xmas_check matrix pos dir =
   (* x already checked in main loop *)
   let search_word = "MAS" in
@@ -119,6 +120,6 @@ let () =
   let matrix = input_file_to_matrix file_path in
 
   (* part 1 *)
-  Printf.printf "solution to part 1: %d\n" (process_matrix_1 matrix);
+  Printf.printf "\nsolution to part 1: %d\n" (process_matrix_1 matrix);
   (* part 2 *)
   Printf.printf "solution to part 1: %d\n" (process_matrix_2 matrix)

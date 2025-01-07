@@ -1,6 +1,6 @@
 (executable
- (public_name aoc)
- (name main)
+ (public_name testing)
+ (name testing)
  (libraries aoc))
 
 (executable
@@ -22,3 +22,11 @@
  (public_name day4)
  (name day4)
  (libraries aoc))
+
+(executable
+ (public_name day5)
+ (name day5)
+ (libraries aoc))
+
+
+

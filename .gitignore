@@ -34,3 +34,4 @@ _opam/
 /archive
 thoughts.md
 .ocamlformat
+bin/testing.ml
