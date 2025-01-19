@@ -159,7 +159,7 @@ let part2 grid =
       count_valid_positions 0 0 0
 
 (** input file to list of strings that's used as grid *)
-let input_file_to_array file_path =
+let input_file_to_format file_path =
   let ic = open_in file_path in
   let content = really_input_string ic (in_channel_length ic) in
   close_in ic;
@@ -167,6 +167,6 @@ let input_file_to_array file_path =
   |> List.filter (fun x -> String.length x > 1)
 
 let () =
-  let grid = input_file_to_array file_path in
+  let grid = input_file_to_format file_path in
   Printf.printf "solution to part 1: %d\n" (part1 grid);
   Printf.printf "solution to part 2: %d\n" (part2 grid)
