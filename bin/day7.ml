@@ -57,6 +57,6 @@ let check_equation input num_ops =
 let () =
   let input = input_file_to_format file_path in
   let temp = List.fold_left (fun acc x -> acc + check_equation x 2) 0 input in
-  Printf.printf "solution to part1: %d\n" temp;
+  Printf.printf "solution to part 1: %d\n" temp;
   let temp = List.fold_left (fun acc x -> acc + check_equation x 3) 0 input in
-  Printf.printf "solution to part2: %d\n" temp
+  Printf.printf "solution to part 2: %d\n" temp
